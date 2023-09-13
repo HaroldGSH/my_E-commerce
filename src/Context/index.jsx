@@ -1,7 +1,36 @@
 import { createContext, useState, useEffect } from 'react';
 
 export const ShoppingCartContext= createContext()
+
+//Inicializar variables account y sign-out en localStorage
+export const initializeLocalStorage= () =>{
+  const accountInLocalStorage = localStorage.getItem('account')
+  const signOutInLocalStorage = localStorage.getItem('sign-out')
+   let parsedAccount
+   let parsedSignOut
+
+   if(!accountInLocalStorage){
+    localStorage.setItem('account', JSON.stringify({}))
+    parsedAccount={}
+   }else{
+    parsedAccount = JSON.parse(accountInLocalStorage)
+   }
+   if(!signOutInLocalStorage){
+    localStorage.setItem('sign-out', JSON.stringify(false))
+    parsedSignOut = false
+   }else{
+    parsedSignOut = JSON.parse(signOutInLocalStorage)
+   }
+}
 export const ShoppingCartProvider = ({children})=>{
+
+   //Crear estados globales de account y sign-out
+   // My Account
+   const [account, setAccount]= useState({})
+
+   //Sign Out
+   const [signOut, setSignOut]= useState(false)
+
     const [count, setCount]= useState(0)//shopping cart: increment quantity
     const [isProductDetailOpen, setIsProductDetailOpen]= useState(false)//product detail: open/close
     const openProductDetail= ()=>setIsProductDetailOpen(true)//product detail: show product
@@ -91,7 +120,11 @@ export const ShoppingCartProvider = ({children})=>{
          setSearchByTitle,
          filteredItems,
          searchByCategory,
-         setSearchByCategory
+         setSearchByCategory,
+         account,
+         setAccount,
+         signOut,
+         setSignOut
          
          }}>
          {children}
