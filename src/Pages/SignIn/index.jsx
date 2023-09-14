@@ -1,7 +1,7 @@
-import { useContext, useState,useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { useContext, useState, useRef } from 'react'
+import { Link, Navigate } from 'react-router-dom'
 import { ShoppingCartContext } from '../../Context'
-import {Layout} from '../../Components/Layout'
+import { Layout }  from '../../Components/Layout'
 
 function SignIn() {
   const context = useContext(ShoppingCartContext)
@@ -13,16 +13,30 @@ function SignIn() {
 
   const noAccountInLocalStorage = parsedAccount?Object.keys(parsedAccount).length===0: true
   const noAccountInLocalState = context.account?Object.keys(context.account).length===0: true
-  const hasUserAnAccount = !noAccountInLocalState || !noAccountInLocalState
+  const hasUserAnAccount = !noAccountInLocalStorage || !noAccountInLocalState 
+  
+  const handleSignIn = () => {
+    const stringifiedSignOut = JSON.stringify(false)
+    localStorage.setItem('sign-out', stringifiedSignOut)
+    context.setSignOut(false)
+    // Redirect
+    return <Navigate replace to={'/'} />
+  }
 
   const createAnAccount = ()=>{
-    const formData= new formData(form.current)
+    const formData= new FormData(form.current)
     const data={
       name:formData.get('name'),
       email:formData.get('email'),
       password:formData.get('password')
     }
-  }
+  
+  const stringifiedAccount = JSON.stringify(data)
+  localStorage.setItem('account', stringifiedAccount)
+  context.setAccount(data)
+  // Sign In
+  handleSignIn()
+}
 
   const renderLogIn = () =>{
     return(
@@ -38,6 +52,7 @@ function SignIn() {
           <Link
           to='/'>
             <button className='bg-black disabled:bg-black/40 text-white w-full rounded-lg py-3 mt-4 mb-2'
+            onClick={() => handleSignIn()}
             disabled={!hasUserAnAccount}>
               Log in
             </button>
@@ -91,11 +106,12 @@ function SignIn() {
 
       return (
       <Layout>
-      <h1 className='font-medium text-xl text-center mb-6 w-80'>Welcome</h1>
-      {renderView()}
-    </Layout>
+        <h1 className='font-medium text-xl text-center mb-6 w-80'>Welcome</h1>
+        {renderView()}
+      </Layout>
    )
- }
  
+ 
+}
  export {SignIn}
  
